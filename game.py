@@ -1,5 +1,6 @@
 import pygame as pg
 from bird import bird
+from pipe import pipe
 import sys,time
 class Game:
     def __init__(self):
@@ -11,6 +12,9 @@ class Game:
         self.clock=pg.time.Clock()
         self.bird=bird()
         self.isEnterPressed=False
+        # self.Pipe=pipe(self.multiplier,self.mov_speed)
+        self.allPipes=[]
+        self.pipeCounter=71
 
         self.setupGroundAndBg()
         self.GameLoop()
@@ -37,6 +41,7 @@ class Game:
             pg.display.update()
             self.clock.tick(60)           # Ek   sec me 60 frame hi run hoenge
 
+    
 
 
     def updateEverything(self,dt):
@@ -49,15 +54,28 @@ class Game:
             elif self.ground2_rect.right < 0:
                 self.ground2_rect.left = self.ground1_rect.right
             
+            if(self.pipeCounter>=80):
+                self.allPipes.append(pipe(self.multiplier,self.mov_speed))
+                print("Pipe Created")
+                self.pipeCounter=0
+            self.pipeCounter+=1
+            for Pipe in self.allPipes:
+                Pipe.update(dt)
+            
+            if len(self.allPipes)!=0:
+                if self.allPipes[0].pipeUp_rect.right<0:
+                    self.allPipes.pop(0)
+                    print("Pipe Removed")
             self.bird.update(dt)
         
 
     def drawEveryThing(self):
-        self.win.blit(self.bg_img,(0,-350))                   # Agr kuch bhi window pe dikhana hai to
+        self.win.blit(self.bg_img,(0,-350))  
+        for Pipe in self.allPipes:
+            Pipe.drawPipe(self.win)
         self.win.blit(self.ground1_img,self.ground1_rect)
         self.win.blit(self.ground2_img,self.ground2_rect)
         self.win.blit(self.bird.birdImg,self.bird.bird_rect)
-
 
     def setupGroundAndBg(self):
         self.bg_img=pg.transform.scale_by(pg.image.load("Assets/bg.png").convert(),self.multiplier)
