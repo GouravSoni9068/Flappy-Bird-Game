@@ -33,18 +33,29 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         self.isEnterPressed = True
+                        self.bird.update_on=True
                     if event.key==pg.K_SPACE and self.isEnterPressed:
                         self.bird.flap(dt)
             
             self.updateEverything(dt)
             self.drawEveryThing()
+            self.checkCollision()
             pg.display.update()
             self.clock.tick(60)           # Ek   sec me 60 frame hi run hoenge
 
-    
+    def checkCollision(self):
+        if len(self.allPipes)!=0:
+            if( self.bird.bird_rect.bottom>=495):
+                self.bird.update_on=False
+                self.isEnterPressed=False
+            if(self.bird.bird_rect.colliderect(self.allPipes[0].pipeUp_rect) or self.bird.bird_rect.colliderect(self.allPipes[0].pipeDown_rect)):
+                self.isEnterPressed=False
+
+
 
 
     def updateEverything(self,dt):
+
         if self.isEnterPressed:
             self.ground1_rect.x -= self.mov_speed * dt
             self.ground2_rect.x -= self.mov_speed * dt
@@ -66,7 +77,7 @@ class Game:
                 if self.allPipes[0].pipeUp_rect.right<0:
                     self.allPipes.pop(0)
                     print("Pipe Removed")
-            self.bird.update(dt)
+        self.bird.update(dt)
         
 
     def drawEveryThing(self):

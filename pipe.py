@@ -9,7 +9,7 @@ class pipe:
         self.pipeUp_rect=self.pipeUp.get_rect()
         self.gap=300
         self.mov_speed=mov_speed
-        self.pipeUp_rect.y=randint(200,400)
+        self.pipeUp_rect.y=randint(150,450)
         self.pipeUp_rect.x=450
         self.pipeDown_rect.x=self.pipeUp_rect.x
         self.pipeDown_rect.y=self.pipeUp_rect.y-self.gap-320

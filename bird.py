@@ -12,17 +12,19 @@ class bird(pg.sprite.Sprite):                  # sprite class help krti hai vo e
         self.gravity=10
         self.flapSpeed=250
         self.counter=0
+        self.update_on=False
 
 
     def update(self,dt):
-        self.applyGravity(dt)
-        self.updateImg()
-        if(self.bird_rect.y<=0 and self.flapSpeed==250):
-            self.bird_rect.y=0
-            self.flapSpeed=0
-            self.velocity_y=0
-        elif(self.bird_rect.y>0 ):
-            self.flapSpeed=250
+        if self.update_on:
+            self.applyGravity(dt)
+            self.updateImg()
+            if(self.bird_rect.y<=0 and self.flapSpeed==250):
+                self.bird_rect.y=0
+                self.flapSpeed=0
+                self.velocity_y=0
+            elif(self.bird_rect.y>0 ):
+                self.flapSpeed=250
 
     def applyGravity(self,dt):
         self.velocity_y+=self.gravity*dt
