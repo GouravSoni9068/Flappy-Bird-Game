@@ -4,6 +4,7 @@ from pipe import pipe
 import sys,time
 class Game:
     def __init__(self):
+        pg.font.init()
         self.width=450
         self.height=650
         self.multiplier=1.5
@@ -12,9 +13,17 @@ class Game:
         self.clock=pg.time.Clock()
         self.bird=bird()
         self.isEnterPressed=False
+        self.font=pg.font.Font("Assets/font.ttf",20)
+        self.score_text=self.font.render("Score: 0 ",True,(255,0,0))
+        self.score_text_rect=self.score_text.get_rect(center=(80,20))
         # self.Pipe=pipe(self.multiplier,self.mov_speed)
         self.allPipes=[]
         self.pipeCounter=71
+        self.start_monetring=False
+        self.score=0
+        
+        
+        
 
         self.setupGroundAndBg()
         self.GameLoop()
@@ -40,6 +49,7 @@ class Game:
             self.updateEverything(dt)
             self.drawEveryThing()
             self.checkCollision()
+            self.checkScore()
             pg.display.update()
             self.clock.tick(60)           # Ek   sec me 60 frame hi run hoenge
 
@@ -52,6 +62,17 @@ class Game:
                 self.isEnterPressed=False
 
 
+    def checkScore(self):
+        if(len(self.allPipes)!=0):
+            if (self.bird.bird_rect.left>self.allPipes[0].pipeUp_rect.left and 
+                self.bird.bird_rect.right<self.allPipes[0].pipeUp_rect.right and
+                self.start_monetring==False):
+                self.start_monetring=True
+            if(self.bird.bird_rect.right>self.allPipes[0].pipeUp_rect.right and
+                self.start_monetring==True):
+                self.start_monetring=False
+                self.score+=1
+                self.score_text=self.font.render(f"Score:{self.score} ",True,(255,0,0))
 
 
     def updateEverything(self,dt):
@@ -78,7 +99,7 @@ class Game:
                     self.allPipes.pop(0)
                     print("Pipe Removed")
         self.bird.update(dt)
-        
+
 
     def drawEveryThing(self):
         self.win.blit(self.bg_img,(0,-350))  
@@ -87,6 +108,7 @@ class Game:
         self.win.blit(self.ground1_img,self.ground1_rect)
         self.win.blit(self.ground2_img,self.ground2_rect)
         self.win.blit(self.bird.birdImg,self.bird.bird_rect)
+        self.win.blit(self.score_text,self.score_text_rect)
 
     def setupGroundAndBg(self):
         self.bg_img=pg.transform.scale_by(pg.image.load("Assets/bg.png").convert(),self.multiplier)

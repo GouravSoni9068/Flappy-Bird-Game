@@ -7,7 +7,7 @@ class pipe:
         self.pipeUp=pg.transform.scale_by(pg.image.load("Assets/pipeup.png").convert_alpha(),multiplier)
         self.pipeDown_rect=self.pipeDown.get_rect()
         self.pipeUp_rect=self.pipeUp.get_rect()
-        self.gap=300
+        self.gap=350
         self.mov_speed=mov_speed
         self.pipeUp_rect.y=randint(150,450)
         self.pipeUp_rect.x=450
