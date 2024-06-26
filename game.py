@@ -13,17 +13,17 @@ class Game:
         self.clock=pg.time.Clock()
         self.bird=bird()
         self.isEnterPressed=False
-        self.font=pg.font.Font("Assets/font.ttf",20)
-        self.score_text=self.font.render("Score: 0 ",True,(255,0,0))
-        self.score_text_rect=self.score_text.get_rect(center=(80,20))
+        self.font=pg.font.Font("Assets/font.ttf",22)
+        self.score_text=self.font.render("Score: 0 ",True,(0,0,0))
+        self.score_text_rect=self.score_text.get_rect(center=(90,20))
+        self.gameover_text=self.font.render("gameover",True,(0,0,0))
+        self.gameover_text_rect=self.gameover_text.get_rect(center=(225,600))
         # self.Pipe=pipe(self.multiplier,self.mov_speed)
         self.allPipes=[]
         self.pipeCounter=71
         self.start_monetring=False
         self.score=0
-        
-        
-        
+        self.isGameStart=True
 
         self.setupGroundAndBg()
         self.GameLoop()
@@ -39,12 +39,13 @@ class Game:
                 if event.type==pg.QUIT:             # Check if the event type is QUIT
                     pg.quit()        # pygame se quit ho gya
                     sys.exit()    # Loop se exit ho jae or sare resources bhi memory se hat jae
-                if event.type == pg.KEYDOWN:
+                if event.type == pg.KEYDOWN and self.isGameStart:
                     if event.key == pg.K_RETURN:
                         self.isEnterPressed = True
                         self.bird.update_on=True
                     if event.key==pg.K_SPACE and self.isEnterPressed:
                         self.bird.flap(dt)
+                    
             
             self.updateEverything(dt)
             self.drawEveryThing()
@@ -58,8 +59,14 @@ class Game:
             if( self.bird.bird_rect.bottom>=495):
                 self.bird.update_on=False
                 self.isEnterPressed=False
+                self.isGameStart=False
             if(self.bird.bird_rect.colliderect(self.allPipes[0].pipeUp_rect) or self.bird.bird_rect.colliderect(self.allPipes[0].pipeDown_rect)):
                 self.isEnterPressed=False
+                self.isGameStart=False
+            
+    # def restartGame(self):
+    #     self.score=0
+    #     self.score_text=self.font.render("Score: 0 ",True,(0,0,0))
 
 
     def checkScore(self):
@@ -72,7 +79,14 @@ class Game:
                 self.start_monetring==True):
                 self.start_monetring=False
                 self.score+=1
-                self.score_text=self.font.render(f"Score:{self.score} ",True,(255,0,0))
+
+                if(self.score==5):
+                    self.mov_speed=300
+                if(self.score==10):
+                    self.mov_speed=350
+                if(self.score==15):
+                    self.mov_speed=450
+                self.score_text=self.font.render(f"Score:{self.score} ",True,(0,0,0))
 
 
     def updateEverything(self,dt):
@@ -86,7 +100,7 @@ class Game:
             elif self.ground2_rect.right < 0:
                 self.ground2_rect.left = self.ground1_rect.right
             
-            if(self.pipeCounter>=80):
+            if(self.pipeCounter>=75):
                 self.allPipes.append(pipe(self.multiplier,self.mov_speed))
                 print("Pipe Created")
                 self.pipeCounter=0
@@ -109,6 +123,8 @@ class Game:
         self.win.blit(self.ground2_img,self.ground2_rect)
         self.win.blit(self.bird.birdImg,self.bird.bird_rect)
         self.win.blit(self.score_text,self.score_text_rect)
+        if not self.isGameStart:
+            self.win.blit(self.gameover_text,self.gameover_text_rect)
 
     def setupGroundAndBg(self):
         self.bg_img=pg.transform.scale_by(pg.image.load("Assets/bg.png").convert(),self.multiplier)
